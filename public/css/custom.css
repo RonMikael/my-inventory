@@ -1,0 +1,56 @@
+/* Custom Styles */
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #dee2e6;
+}
+
+.table-bordered th {
+    background-color: #f8f9fa;
+}
+
+.table-bordered th,
+.table-bordered td {
+    vertical-align: middle;
+}
+
+.btn-action {
+    margin-right: 5px;
+}
+
+.product-image {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+.add-to-cart-btn {
+    margin-top: 10px;
+}
+
+.product-image-cart {
+    height: 200px;
+    object-fit: cover;
+}
+.card-body-cart {
+    padding: 15px;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+}
+
+
+
