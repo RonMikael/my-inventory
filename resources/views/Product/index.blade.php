@@ -36,10 +36,32 @@
                             <td>{{ $product->brand }}</td>
                             <td>{{ $product->category->name }}</td>
                             <td>
-                                    @foreach ($product->stocks as $stock) 
-                                            {{ $stock->stock_room }} - {{ $stock->location }}: {{ $stock->quantity }}<br>
-                                    @endforeach
-                            </td>                            
+                                <!-- Button to toggle stock details -->
+                                <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#stocks-{{ $product->id }}" aria-expanded="false" aria-controls="stocks-{{ $product->id }}">
+                                    Show Stocks
+                                </button>
+                                <!-- Collapsible section for stock details -->
+                                <div class="collapse mt-2" id="stocks-{{ $product->id }}">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Stock Room</th>
+                                                <th class="text-center">Location</th>
+                                                <th class="text-center">Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($product->stocks as $stock)
+                                                <tr>
+                                                    <td class="text-center">{{ $stock->stock_room }}</td>
+                                                    <td class="text-center">{{ $stock->location }}</td>
+                                                    <td class="text-center">{{ $stock->quantity }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
                             <td>
                                 @foreach ($product->images as $image)
                                     <img src="{{ Storage::url($image->image_path) }}" alt="Product Image" width="50" height="50">
@@ -62,6 +84,7 @@
                 </tbody>
             </table>
         </div>
+                
     </div>
 
     <!-- Add Product Modal -->
@@ -195,16 +218,6 @@
                                 <!-- Add more options as needed -->
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="size" class="form-label">Size</label>
-                            <select id="size" name="size" class="form-control" required>
-                                <option value="Small">Small</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Large">Large</option>
-                                <!-- Add more options as needed -->
-                            </select>
-                        </div>
-
                         <div class="mb-3">
                             <label for="editReferenceNumber" class="form-label">Reference Number</label>
                             <input type="text" class="form-control" id="editReferenceNumber" name="reference_number">

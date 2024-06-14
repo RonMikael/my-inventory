@@ -101,7 +101,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        // Validate the incoming request data
         $validatedData = $request->validate([
             'size' => 'required',
             'reference_number' => 'nullable',
@@ -116,25 +116,25 @@ class ProductController extends Controller
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        // Update the product details
         $product->update($validatedData);
 
+        // Delete existing stocks before updating or adding new ones
+        $product->stocks()->delete();
+
+        // Add or update stocks
         if (isset($validatedData['stocks'])) {
             foreach ($validatedData['stocks'] as $stockData) {
-                if (isset($stockData['id'])) {
-                    $stock = Stock::find($stockData['id']);
-                    if ($stock) {
-                        $stock->update($stockData);
-                    }
-                } else {
-                    $product->stocks()->create($stockData);
-                }
+                $product->stocks()->create($stockData);
             }
         }
 
+        // Handle deleted stocks if provided
         if (isset($request->deleted_stocks)) {
             Stock::destroy($request->deleted_stocks);
         }
 
+        // Handle deleted images if provided
         if (isset($request->deleted_images)) {
             foreach ($request->deleted_images as $deletedImageId) {
                 $deletedImage = ProductImage::find($deletedImageId);
@@ -145,6 +145,7 @@ class ProductController extends Controller
             }
         }
 
+        // Handle uploaded images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('product_images', 'public');

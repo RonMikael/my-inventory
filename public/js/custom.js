@@ -396,9 +396,8 @@ $(document).ready(function () {
                         <option value="">Select Stock Room</option>
                         <option value="Building 1" ${stock.stock_room === 'Building 1' ? 'selected' : ''}>Building 1</option>
                         <option value="Building 2" ${stock.stock_room === 'Building 2' ? 'selected' : ''}>Building 2</option>
-                        <option value="Other" ${stock.stock_room && !['Building 1', 'Building 2'].includes(stock.stock_room) ? 'selected' : ''}>${stock.stock_room || 'Other'}</option>
+                        ${stock.stock_room && !['Building 1', 'Building 2'].includes(stock.stock_room) ? `<option value="${stock.stock_room}" selected>${stock.stock_room}</option>` : ''}
                     </select>
-                    <input type="text" id="editOtherStockRoom${editStockIndex}" class="form-control mt-2" name="stocks[${editStockIndex}][other_stock_room]" style="display: ${stock.stock_room && !['Building 1', 'Building 2'].includes(stock.stock_room) ? 'block' : 'none'};" placeholder="Enter Stock Room" value="${stock.other_stock_room || ''}">
                 </div>
                 <div class="mb-3">
                     <label for="editLocation${editStockIndex}" class="form-label">Location</label>
@@ -407,7 +406,6 @@ $(document).ready(function () {
                         ${generateLocationOptions(stock.stock_room, stock.location)}
                         ${stock.location && !['Rack 1', 'Rack 2', 'Rack A', 'Rack B'].includes(stock.location) ? `<option value="${stock.location}" selected>${stock.location}</option>` : ''}
                     </select>
-                    <input type="text" id="editOtherLocation${editStockIndex}" class="form-control mt-2" name="stocks[${editStockIndex}][other_location]" style="display: ${stock.location && !['Rack 1', 'Rack 2', 'Rack A', 'Rack B'].includes(stock.location) ? 'block' : 'none'};" placeholder="Enter Location" value="${stock.other_location || ''}">
                 </div>
                 <label for="editQuantity${editStockIndex}" class="form-label">Quantity</label>
                 <input type="number" class="form-control" id="editQuantity${editStockIndex}" name="stocks[${editStockIndex}][quantity]" value="${stock.quantity || ''}">
@@ -416,19 +414,23 @@ $(document).ready(function () {
             </div>
         `;
         editStockContainer.append(stockHtml);
-    
+
         // Initialize Selectize for the new stock room and location selects
         const editStockRoomSelect = $(`#editStockRoom${editStockIndex}`);
         const editLocationSelect = $(`#editLocation${editStockIndex}`);
-        initEditSelectize(editStockRoomSelect, editLocationSelect, stock.stock_room);
-    
+        initEditSelectize(editStockRoomSelect, editLocationSelect);
+        
+        // Set the value of the stock room selectize control
+        editStockRoomSelect[0].selectize.setValue(stock.stock_room);
+
         editStockIndex++;
     }
-    
-    function initEditSelectize(stockRoomSelect, locationSelect, selectedStockRoom) {
+
+    function initEditSelectize(stockRoomSelect, locationSelect) {
         stockRoomSelect.selectize({
             create: true, // Allow creating new items
             sortField: 'text', // Sort dropdown items by text
+            allowEmptyOption: true, // Allow empty option for custom input
             onChange: function (value) {
                 const locationSelectize = locationSelect[0].selectize;
                 locationSelectize.clearOptions(); // Clear existing options
@@ -438,22 +440,16 @@ $(document).ready(function () {
                 } else if (value === 'Building 2') {
                     locationSelectize.addOption({ value: 'Rack A', text: 'Rack A' });
                     locationSelectize.addOption({ value: 'Rack B', text: 'Rack B' });
-                } else {
-                    locationSelectize.addOption({ value: 'Other', text: 'Other' });
                 }
                 locationSelectize.refreshOptions();
-                // If selectedStockRoom is provided and not empty, set it as the value
-                if (selectedStockRoom && selectedStockRoom !== '') {
-                    stockRoomSelect[0].selectize.setValue(selectedStockRoom);
-                }
             }
         });
-    
+
         locationSelect.selectize({
             create: true, // Allow creating new items
             sortField: 'text' // Sort dropdown items by text
         });
-    }
+    }  
     
     function generateLocationOptions(stockRoom, selectedLocation) {
         let optionsHtml = '';
@@ -464,7 +460,6 @@ $(document).ready(function () {
             optionsHtml += `<option value="Rack A" ${selectedLocation === 'Rack A' ? 'selected' : ''}>Rack A</option>`;
             optionsHtml += `<option value="Rack B" ${selectedLocation === 'Rack B' ? 'selected' : ''}>Rack B</option>`;
         } else {
-            optionsHtml += `<option value="Other" ${selectedLocation === 'Other' ? 'selected' : ''}>Other</option>`;
         }
         return optionsHtml;
     }    
