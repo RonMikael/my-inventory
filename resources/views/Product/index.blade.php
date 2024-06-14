@@ -38,7 +38,7 @@
                             <td>
                                 <!-- Button to toggle stock details -->
                                 <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#stocks-{{ $product->id }}" aria-expanded="false" aria-controls="stocks-{{ $product->id }}">
-                                    Show Stocks
+                                    Show Stocks (Total: {{ $product->total_stock_quantity }})
                                 </button>
                                 <!-- Collapsible section for stock details -->
                                 <div class="collapse mt-2" id="stocks-{{ $product->id }}">

@@ -18,10 +18,15 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
         $products = Product::with('category', 'stocks', 'images')->get();
-        $categories = Category::all(); // Fetch categories
-        return view('Product.index', compact('products', 'categories')); // Pass categories to the view
+        $categories = Category::all();
+
+        // Calculate the total stock quantity for each product
+        foreach ($products as $product) {
+            $product->total_stock_quantity = $product->stocks->sum('quantity');
+        }
+
+        return view('Product.index', compact('products', 'categories'));
     }
 
     /**
