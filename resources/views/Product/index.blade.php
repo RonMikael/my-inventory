@@ -63,10 +63,28 @@
                                 </div>
                             </td>
                             <td>
-                                @foreach ($product->images as $image)
-                                    <img src="{{ Storage::url($image->image_path) }}" alt="Product Image" width="50" height="50">
-                                @endforeach
-                            </td>
+                                @if($product->images->count() > 0)
+                                    <div id="carousel-{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            @foreach ($product->images as $index => $image)
+                                                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                                    <img src="{{ Storage::url($image->image_path) }}" alt="Product Image" class="d-block w-100" style="width: 50px; height: 50px;">
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $product->id }}" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ $product->id }}" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                @else
+                                    <p>No images available</p>
+                                @endif
+                            </td>                            
                             <td class="text-center">
                                 <button type="button" class="btn btn-primary btn-sm btn-edit-product" data-product-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
                                 <form id="deleteProductForm" action="{{ route('products.destroy', $product) }}" method="POST" style="display: inline;">
