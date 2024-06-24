@@ -64,7 +64,7 @@
                             </td>
                             <td>
                                 @if($product->images->count() > 0)
-                                    <div id="carousel-{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
+                                    <div id="carousel-{{ $product->id }}" class="carousel slide">
                                         <div class="carousel-inner">
                                             @foreach ($product->images as $index => $image)
                                                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
@@ -84,7 +84,7 @@
                                 @else
                                     <p>No images available</p>
                                 @endif
-                            </td>                            
+                            </td>                                                      
                             <td class="text-center">
                                 <button type="button" class="btn btn-primary btn-sm btn-edit-product" data-product-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
                                 <form id="deleteProductForm" action="{{ route('products.destroy', $product) }}" method="POST" style="display: inline;">
