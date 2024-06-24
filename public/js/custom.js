@@ -197,21 +197,26 @@ $(document).ready(function () {
     });
 
     //PRODUCT CRUD START//
-    document.getElementById('searchInputProductIndex').addEventListener('input', function () {
-        const searchText = this.value.trim().toLowerCase(); // Trim whitespace and convert to lowercase
-        const rows = document.querySelectorAll('tbody tr');
-        rows.forEach(row => {
-            let rowVisible = false; // Flag to determine if row should be visible
-            row.querySelectorAll('td').forEach(cell => {
-                // Check if any cell contains the search text
-                if (cell.textContent.trim().toLowerCase().includes(searchText)) {
-                    rowVisible = true;
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInputProductIndex');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const searchText = this.value.trim().toLowerCase(); // Trim whitespace and convert to lowercase
+                const rows = document.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    let rowVisible = false; // Flag to determine if row should be visible
+                    row.querySelectorAll('td').forEach(cell => {
+                        // Check if any cell contains the search text
+                        if (cell.textContent.trim().toLowerCase().includes(searchText)) {
+                            rowVisible = true;
+                        }
+                    });
+                    // Toggle row visibility based on search text
+                    row.style.display = rowVisible ? '' : 'none';
+                });
             });
-            // Toggle row visibility based on search text
-            row.style.display = rowVisible ? '' : 'none';
-        });
-    });    
+        }
+    });        
 
     $('#size').selectize({
         create: true, // Allow creating new items
