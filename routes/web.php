@@ -35,6 +35,13 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::post('/products/store', 'App\Http\Controllers\ProductController@store')->name('products.store');
     Route::put('/products/{product}', 'App\Http\Controllers\ProductController@update')->name('products.update');
     Route::get('/products/{product}/edit', 'App\Http\Controllers\ProductController@edit')->name('products.edit');
+
+    Route::get('/customer', 'App\Http\Controllers\CustomerController@index')->name('customer.index');
+    Route::delete('/customers/{id}', 'App\Http\Controllers\CustomerController@destroy')->name('customers.destroy');
+    Route::get('/customers/{id}/show', 'App\Http\Controllers\CustomerController@show')->name('customers.show');
+    Route::get('/customers/{id}/edit', 'App\Http\Controllers\CustomerController@edit')->name('customers.edit');
+    Route::put('/customers/{id}', 'App\Http\Controllers\CustomerController@update')->name('customers.update');
+    Route::post('/customers/store', 'App\Http\Controllers\CustomerController@store')->name('customers.store');
 });
 
 Route::get('/product-carts', 'App\Http\Controllers\EcommerceController@index')->name('product.index');
