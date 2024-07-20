@@ -133,56 +133,6 @@ $(document).ready(function () {
     });
     //USER CRUD END//
 
-
-    //CATEGORY CRUD START//
-    $('#confirmDeleteCategoryModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var categoryId = button.data('category-id'); // Extract info from data-* attributes
-        var modal = $(this);
-        modal.find('#deleteCategoryForm').attr('action', '/categories/' + categoryId);
-    });
-
-    $('.btn-view-category').click(function (e) {
-        e.preventDefault();
-        var categoryId = $(this).data('category-id');
-        // AJAX request to fetch user details
-        $.ajax({
-            url: '/categories/' + categoryId + '/show',
-            type: 'GET',
-            success: function (response) {
-                // Populate user details in modal
-                $('#categoryName').text(response.name);
-                // Show the modal
-                $('#categoryDetailsModal').modal('show');
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
-
-    $('.btn-edit-category').click(function (e) {
-        e.preventDefault();
-        var categoryId = $(this).data('category-id');
-        // AJAX request to fetch user details
-        $.ajax({
-            url: '/categories/' + categoryId + '/edit',
-            type: 'GET',
-            success: function (response) {
-                // Populate user details in edit modal
-                $('#editCategoryName').val(response.name);
-                $('#editCategoryForm').attr('action', '/categories/' + categoryId); // Set action URL for form
-                // Show the modal
-                $('#editCategoryModal').modal('show');
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
-    //CATEGORY CRUD END//
-
-
     $('#searchInputProduct').on('input', function () {
         var searchText = $(this).val().toLowerCase();
         $('.product-item').each(function () {

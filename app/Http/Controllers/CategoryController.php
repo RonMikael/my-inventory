@@ -5,16 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::with('products')->get();
-        return view('Category.index', ['categories' => $categories]);
+        $search = $request->input('search');
+        $categories = Category::with('products')
+            ->when($search, function($query, $search) {
+                return $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->paginate(10);
+        
+        return view('category.index', ['categories' => $categories, 'search' => $search]);
     }
 
     /**
@@ -37,7 +44,7 @@ class CategoryController extends Controller
 
         // Create a new category
         $category = new Category;
-        $category->name = $request->name;
+        $category->name = Str::upper($request->name); // Ensure name is uppercase
         $category->save();
 
         // Redirect back with success message
@@ -47,7 +54,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
         //
         $categories = Category::find($id);
@@ -78,7 +85,7 @@ class CategoryController extends Controller
         ]);
 
         // Update the user details
-        $categories->update($request->only('name'));
+        $categories->update(['name' => Str::upper($request->name)]); // Update and ensure uppercase
 
         // Redirect back with success message
         return redirect()->back()->with('success', 'Category details updated successfully!');

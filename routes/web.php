@@ -12,7 +12,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::group(['middleware' => 'role:admin'], function () {
+// Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/users', 'App\Http\Controllers\UserController@index')->name('user.index');
     Route::delete('/users/{id}', 'App\Http\Controllers\UserController@destroy')->name('users.destroy');
     Route::get('/users/{id}/show', 'App\Http\Controllers\UserController@show')->name('users.show');
@@ -42,7 +42,7 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::get('/customers/{id}/edit', 'App\Http\Controllers\CustomerController@edit')->name('customers.edit');
     Route::put('/customers/{id}', 'App\Http\Controllers\CustomerController@update')->name('customers.update');
     Route::post('/customers/store', 'App\Http\Controllers\CustomerController@store')->name('customers.store');
-});
+// });
 
 Route::get('/product-carts', 'App\Http\Controllers\EcommerceController@index')->name('product.index');
 
