@@ -49,4 +49,9 @@ $(document).ready(function () {
         var capitalized = $(this).val().toUpperCase();
         $(this).val(capitalized);
     });
+
+    $('#editCategoryName').on('input', function() {
+        var capitalized = $(this).val().toUpperCase();
+        $(this).val(capitalized);
+    });
 });

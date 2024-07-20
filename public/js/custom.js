@@ -106,6 +106,11 @@ $(document).ready(function () {
         $('.alert-success').fadeOut('slow');
     }, 2000);
 
+    // Hide success message after 2 seconds
+    setTimeout(function () {
+        $('.alert-danger').fadeOut('slow');
+    }, 2000);
+
     // Eye toggle functionality for password field
     $('#eye-toggle').click(function () {
         var passwordInput = $('#password');

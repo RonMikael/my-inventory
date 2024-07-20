@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -39,7 +40,14 @@ class CategoryController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('categories', 'name')->ignore(null, 'id')
+            ],
+        ], [
+            'name.unique' => 'The category name is already taken. Please choose a different name.',
         ]);
 
         // Create a new category
@@ -76,16 +84,23 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-        $categories = Category::findOrFail($id);
-
         // Validate the request data
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('categories', 'name')->ignore($id, 'id')
+            ],
+        ], [
+            'name.unique' => 'The category name is already taken. Please choose a different name.',
         ]);
 
+        // Find the category to update
+        $category = Category::findOrFail($id);
+
         // Update the user details
-        $categories->update(['name' => Str::upper($request->name)]); // Update and ensure uppercase
+        $category->update(['name' => Str::upper($request->name)]); // Update and ensure uppercase
 
         // Redirect back with success message
         return redirect()->back()->with('success', 'Category details updated successfully!');
