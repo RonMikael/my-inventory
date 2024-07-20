@@ -121,4 +121,89 @@ class CategoryController extends Controller
         $category->delete();
         return redirect()->route('category.index')->with('success', 'Category deleted successfully.');
     }
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="category_template.csv"',
+        ];
+
+        $columns = ['Name'];
+
+        $callback = function() use ($columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt',
+        ]);
+
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->getRealPath();
+            $file = fopen($path, 'r');
+
+            $imported = 0;
+            while (($row = fgetcsv($file)) !== false) {
+                // Skip header row
+                if ($row[0] == 'Name') {
+                    continue;
+                }
+
+                $name = trim($row[0]); // Trim whitespace from name
+                $uppercaseName = Str::upper($name); // Convert name to uppercase
+
+                // Check if category with this name already exists
+                $existingCategory = Category::where('name', $uppercaseName)->first();
+
+                if (!$existingCategory) {
+                    Category::create(['name' => $uppercaseName]);
+                    $imported++;
+                }
+            }
+
+            fclose($file);
+
+            return redirect()->route('category.index')->with('success', 'Imported '.$imported.' categories successfully!');
+        }
+
+        return redirect()->back()->with('error', 'File not found or invalid.');
+    }
+
+    public function export(Request $request)
+    {
+        $search = $request->input('search');
+
+        // Fetch categories based on search query
+        $categories = Category::when($search, function($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%');
+        })->get();
+
+        // Define CSV headers
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="categories.csv"',
+        ];
+
+        // Prepare CSV data
+        $callback = function() use ($categories) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['ID', 'Name']); // CSV header
+
+            foreach ($categories as $category) {
+                fputcsv($file, [$category->id, $category->name]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
 }

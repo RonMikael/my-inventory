@@ -29,6 +29,9 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
     Route::put('/categories/{id}', 'App\Http\Controllers\CategoryController@update')->name('category.update');
     Route::post('/categories/store', 'App\Http\Controllers\CategoryController@store')->name('category.store');
 
+    Route::get('/category/downloadTemplate', 'App\Http\Controllers\CategoryController@downloadTemplate')->name('category.downloadTemplate');
+    Route::post('/category/import', 'App\Http\Controllers\CategoryController@import')->name('category.import');
+    Route::get('/category/export', 'App\Http\Controllers\CategoryController@export')->name('category.export');
     
     Route::get('/products', 'App\Http\Controllers\ProductController@index')->name('products.index');
     Route::delete('/products/{product}', 'App\Http\Controllers\ProductController@destroy')->name('products.destroy');
