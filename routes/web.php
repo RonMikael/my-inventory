@@ -48,6 +48,10 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
     Route::get('/customers/{id}/edit', 'App\Http\Controllers\CustomerController@edit')->name('customers.edit');
     Route::put('/customers/{id}', 'App\Http\Controllers\CustomerController@update')->name('customers.update');
     Route::post('/customers/store', 'App\Http\Controllers\CustomerController@store')->name('customers.store');
+
+    Route::get('/customers/downloadTemplate', 'App\Http\Controllers\CustomerController@downloadTemplate')->name('customers.downloadTemplate');
+    Route::post('/customers/import', 'App\Http\Controllers\CustomerController@import')->name('customers.import');
+    Route::get('/customers/export', 'App\Http\Controllers\CustomerController@export')->name('customers.export');
 // });
 
 Route::get('/product-carts', 'App\Http\Controllers\EcommerceController@index')->name('product.index');

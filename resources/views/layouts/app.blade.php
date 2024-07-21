@@ -97,5 +97,6 @@
     <script src="{{ asset('js/custom.js')}}"></script>
     <script src="{{ asset('js/category.js')}}"></script>
     <script src="{{ asset('js/user.js')}}"></script>
+    <script src="{{ asset('js/customer.js')}}"></script>
 </body>
 </html>
