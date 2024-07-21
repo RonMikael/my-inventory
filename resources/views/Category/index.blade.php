@@ -25,20 +25,49 @@
     @endif
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Category List</h2>
-        <div>
-            <a href="{{ route('category.export', ['search' => $search]) }}" class="btn btn-success">Export</a>
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importCategoryModal">Import</button>
+        <h2 class="mb-0">Category List</h2>
+        <div class="d-flex">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-gear"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" style="min-width: 200px;"> <!-- Adjust min-width here as needed -->
+                    <li>
+                        <div class="d-flex flex-column px-3"> <!-- Add padding on left and right sides -->
+                            <a href="{{ route('category.export', ['search' => $search]) }}" class="btn btn-success my-1">Export</a> <!-- Adjust margin as needed -->
+                            <button type="button" class="btn btn-secondary my-1" data-bs-toggle="modal" data-bs-target="#importCategoryModal">Import</button> <!-- Adjust margin as needed -->
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
         </div>
     </div>
 
-    <form action="{{ route('category.index') }}" method="GET" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Search categories..." value="{{ $search }}">
-            <button type="submit" class="btn btn-outline-secondary">Search</button>
+    <div class="row">
+        <div class="col-md-6">
+            <form action="{{ route('category.index') }}" method="GET" class="mb-3">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search categories..." value="{{ $search }}">
+                    <button type="submit" class="btn btn-outline-secondary">Search</button>
+                </div>
+            </form>
         </div>
-    </form>
+        <div class="col-md-6">
+            <form action="{{ route('category.index') }}" method="GET" class="mb-3">
+                <div class="input-group">
+                    <label class="input-group-text" for="perPageSelect">Items per page:</label>
+                    <select class="form-select" id="perPageSelect" name="perPage" onchange="this.form.submit()">
+                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                        <option value="15" {{ $perPage == 15 ? 'selected' : '' }}>15</option>
+                        <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
@@ -68,10 +97,10 @@
             </tbody>
         </table>
         <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                {{ $categories->links() }}
-            </ul>
-        </nav>
+    <ul class="pagination justify-content-center">
+        {{ $categories->appends(['perPage' => $perPage])->links() }}
+    </ul>
+</nav>
     </div>
 </div>
 

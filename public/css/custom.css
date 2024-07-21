@@ -1,44 +1,73 @@
 /* Custom Styles */
+
+/* Pagination Styles */
+.pagination {
+    margin-top: 20px;
+}
+.pagination .page-item > a,
+.pagination .page-item > span {
+    color: #007bff;
+    border-color: #007bff;
+    background-color: #ffffff;
+    padding: 6px 12px;
+    margin: 0 4px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+.pagination .page-item.active > a,
+.pagination .page-item.active > span {
+    background-color: #007bff;
+    color: #ffffff;
+    border-color: #007bff;
+}
+.pagination .page-item.disabled > span,
+.pagination .page-item.disabled > a {
+    color: #6c757d;
+    pointer-events: none;
+    cursor: auto;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+}
+.pagination .page-link:hover {
+    z-index: 2;
+    color: #0056b3;
+    text-decoration: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+/* Other existing styles */
 .table-bordered th,
 .table-bordered td {
     border: 1px solid #dee2e6;
 }
-
 .table-bordered th {
     background-color: #f8f9fa;
 }
-
 .table-bordered th,
 .table-bordered td {
     vertical-align: middle;
 }
-
 .btn-action {
     margin-right: 5px;
 }
-
 .product-image {
     height: 200px;
     object-fit: cover;
 }
-
 .card-body {
     padding: 1rem;
 }
-
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
 }
-
 .card-text {
     font-size: 1rem;
 }
-
 .add-to-cart-btn {
     margin-top: 10px;
 }
-
 .product-image-cart {
     height: 200px;
     object-fit: cover;
@@ -54,15 +83,10 @@
 .table-hover tbody tr:hover {
     background-color: #f5f5f5;
 }
-
 .modal-header {
     background-color: #343a40;
     color: #ffffff;
 }
-
 .btn-close {
     background-color: #ffffff;
 }
-
-
-

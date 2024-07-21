@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Config;
 
 class CategoryController extends Controller
 {
@@ -15,14 +16,16 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        $perPage = $request->input('perPage', Config::get('pagination.default')); // Get per page from request or use default
         $search = $request->input('search');
+        
         $categories = Category::with('products')
             ->when($search, function($query, $search) {
                 return $query->where('name', 'like', '%' . $search . '%');
             })
-            ->paginate(10);
-        
-        return view('category.index', ['categories' => $categories, 'search' => $search]);
+            ->paginate($perPage);
+
+        return view('category.index', ['categories' => $categories, 'search' => $search, 'perPage' => $perPage]);
     }
 
     /**
