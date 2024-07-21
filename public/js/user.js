@@ -1,5 +1,16 @@
 $(document).ready(function () {
     //USER CRUD START//
+
+    $('#btn-list-viewuser').click(function () {
+        $('#list-viewuser').removeClass('d-none');
+        $('#kanban-viewuser').addClass('d-none');
+    });
+    
+    $('#btn-kanban-viewuser').click(function () {
+        $('#kanban-viewuser').removeClass('d-none');
+        $('#list-viewuser').addClass('d-none');
+    });
+
     $('#confirmDeleteUserModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget); // Button that triggered the modal
         var userId = button.data('user-id'); // Extract info from data-* attributes

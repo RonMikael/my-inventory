@@ -28,6 +28,14 @@
         <h2 class="mb-0">User List</h2>
         <div class="d-flex">
             <div class="btn-group me-2">
+                <button type="button" class="btn btn-outline-secondary" id="btn-list-viewuser">
+                    <i class="bi bi-list"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="btn-kanban-viewuser">
+                    <i class="bi bi-kanban"></i>
+                </button>
+            </div>
+            <div class="btn-group me-2">
                 <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-gear"></i>
                 </button>
@@ -68,6 +76,7 @@
         </div>
     </div>
 
+    <div id="list-viewuser">
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead class="table-light">
@@ -103,12 +112,40 @@
             </tbody>
         </table>
         <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-        {{ $users->appends(['perPage' => $perPage])->links() }}
-    </ul>
-</nav>
+            <ul class="pagination justify-content-center">
+                {{ $users->appends(['perPage' => $perPage])->links() }}
+            </ul>
+        </nav>
     </div>
-</div>
+    </div>
+
+    <div id="kanban-viewuser" class="d-none">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @forelse($users as $user)
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $user->name }}</h5>
+                            <p class="card-text"><strong>Role:</strong> {{ $user->role }}</p>
+                            <p class="card-text"><strong>Email:</strong> {{ $user->email }}</p>
+                            <button type="button" class="btn btn-info btn-sm btn-view-user"
+                                    data-user-id="{{ $user->id }}">View</button>
+                                <button class="btn btn-primary btn-sm btn-edit-user"
+                                    data-user-id="{{ $user->id }}">Edit</button>
+                                <button class="btn btn-warning btn-sm btn-edit-user-role"
+                                    data-user-id="{{ $user->id }}">Update Role</button>
+                                <button type="button" class="btn btn-danger btn-sm btn-delete" data-bs-toggle="modal"
+                                    data-bs-target="#confirmDeleteUserModal" data-user-id="{{ $user->id }}">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col">
+                    <p class="text-center">No User found.</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
 
 <!-- Modals -->
 <!-- Add User Modal -->
@@ -285,4 +322,6 @@
             </div>
         </div>
     </div>
+
+</div>
 @endsection
