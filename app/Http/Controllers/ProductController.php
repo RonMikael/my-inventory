@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Stock;
 use App\Models\ProductImage;
+use App\Models\StockRecord;
 
 use Illuminate\Support\Facades\Storage;
 
@@ -57,7 +58,7 @@ class ProductController extends Controller
             'images' => 'nullable|array',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-    
+
         $product = Product::create([
             'size' => $validatedData['size'],
             'reference_number' => $validatedData['reference_number'],
@@ -65,20 +66,34 @@ class ProductController extends Controller
             'brand' => $validatedData['brand'],
             'category_id' => $validatedData['category_id']
         ]);
-    
+
         if (!empty($validatedData['stocks'])) {
             foreach ($validatedData['stocks'] as $stock) {
-                $product->stocks()->create($stock);
+                // Create stock entry only if necessary fields are provided
+                if (isset($stock['stock_room']) && isset($stock['location']) && isset($stock['quantity'])) {
+                    // Create stock record
+                    $newStock = $product->stocks()->create($stock);
+
+                    // Log stock addition in stock_records table
+                    StockRecord::create([
+                        'product_id' => $product->id,
+                        'stock_id' => $newStock->id,
+                        'quantity_change' => $stock['quantity'],
+                        'action' => '+',
+                        'stock_room' => $stock['stock_room'],
+                        'location' => $stock['location']
+                    ]);
+                }
             }
         }
-    
+
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('product_images', 'public');
                 $product->images()->create(['image_path' => $path]);
             }
         }
-    
+
         return redirect()->route('products.index')->with('success', 'Product added successfully');
     }
 
@@ -114,34 +129,90 @@ class ProductController extends Controller
             'brand' => 'required',
             'category_id' => 'required|exists:categories,id',
             'stocks' => 'nullable|array',
+            'stocks.*.id' => 'nullable|integer|exists:stocks,id',
             'stocks.*.stock_room' => 'nullable|string',
             'stocks.*.location' => 'nullable|string',
             'stocks.*.quantity' => 'nullable|integer',
             'images' => 'nullable|array',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'deleted_stocks' => 'nullable|array',
+            'deleted_stocks.*' => 'nullable|integer|exists:stocks,id',
+            'deleted_images' => 'nullable|array',
+            'deleted_images.*' => 'nullable|integer|exists:product_images,id',
         ]);
-
+    
         // Update the product details
-        $product->update($validatedData);
-
-        // Delete existing stocks before updating or adding new ones
-        $product->stocks()->delete();
-
-        // Add or update stocks
+        $product->update([
+            'size' => $validatedData['size'],
+            'reference_number' => $validatedData['reference_number'],
+            'price' => $validatedData['price'],
+            'brand' => $validatedData['brand'],
+            'category_id' => $validatedData['category_id']
+        ]);
+    
+        // Update existing stocks and log changes
         if (isset($validatedData['stocks'])) {
             foreach ($validatedData['stocks'] as $stockData) {
-                $product->stocks()->create($stockData);
+                if (isset($stockData['id'])) {
+                    // Update existing stock
+                    $stock = Stock::findOrFail($stockData['id']);
+                    $previousQuantity = $stock->quantity;
+    
+                    // Update stock details
+                    $stock->update([
+                        'stock_room' => $stockData['stock_room'],
+                        'location' => $stockData['location'],
+                        'quantity' => $stockData['quantity'],
+                    ]);
+    
+                    // Determine action for stock record
+                    if ($stockData['quantity'] > $previousQuantity) {
+                        // Quantity increased
+                        $quantityChange = $stockData['quantity'] - $previousQuantity;
+                        $action = '+';
+                    } elseif ($stockData['quantity'] < $previousQuantity) {
+                        // Quantity decreased
+                        $quantityChange = $previousQuantity - $stockData['quantity'];
+                        $action = '-';
+                    } else {
+                        // Quantity unchanged
+                        continue; // Skip logging if quantity hasn't changed
+                    }
+    
+                    // Log stock change in stock_records table
+                    StockRecord::create([
+                        'product_id' => $product->id,
+                        'stock_id' => $stock->id,
+                        'quantity_change' => $quantityChange,
+                        'action' => $action,
+                        'stock_room' => $stockData['stock_room'],
+                        'location' => $stockData['location']
+                    ]);
+                } else {
+                    // Handle addition of new stocks
+                    $newStock = $product->stocks()->create($stockData);
+    
+                    // Log stock addition in stock_records table
+                    StockRecord::create([
+                        'product_id' => $product->id,
+                        'stock_id' => $newStock->id,
+                        'quantity_change' => $stockData['quantity'],
+                        'action' => '+',
+                        'stock_room' => $stockData['stock_room'],
+                        'location' => $stockData['location']
+                    ]);
+                }
             }
         }
-
-        // Handle deleted stocks if provided
-        if (isset($request->deleted_stocks)) {
-            Stock::destroy($request->deleted_stocks);
+    
+        // Handle deleted stocks
+        if (isset($validatedData['deleted_stocks'])) {
+            Stock::destroy($validatedData['deleted_stocks']);
         }
-
-        // Handle deleted images if provided
-        if (isset($request->deleted_images)) {
-            foreach ($request->deleted_images as $deletedImageId) {
+    
+        // Handle deleted images
+        if (isset($validatedData['deleted_images'])) {
+            foreach ($validatedData['deleted_images'] as $deletedImageId) {
                 $deletedImage = ProductImage::find($deletedImageId);
                 if ($deletedImage) {
                     Storage::disk('public')->delete($deletedImage->image_path);
@@ -149,7 +220,7 @@ class ProductController extends Controller
                 }
             }
         }
-
+    
         // Handle uploaded images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -157,7 +228,7 @@ class ProductController extends Controller
                 $product->images()->create(['image_path' => $path]);
             }
         }
-
+    
         return redirect()->route('products.index')->with('success', 'Product updated successfully');
     }
 
