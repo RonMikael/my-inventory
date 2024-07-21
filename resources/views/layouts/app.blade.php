@@ -94,7 +94,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/selectize@0.12.6/dist/js/standalone/selectize.min.js"></script>
 
-    <script src="{{ asset('js/category.js')}}"></script>
     <script src="{{ asset('js/custom.js')}}"></script>
+    <script src="{{ asset('js/category.js')}}"></script>
+    <script src="{{ asset('js/user.js')}}"></script>
 </body>
 </html>

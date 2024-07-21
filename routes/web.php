@@ -20,6 +20,9 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
     Route::put('/users/{id}', 'App\Http\Controllers\UserController@update')->name('users.update');
     Route::put('/users/{id}/role', 'App\Http\Controllers\UserController@updaterole')->name('users.updaterole');
     Route::post('/users/store', 'App\Http\Controllers\UserController@store')->name('users.store');
+
+    Route::get('/users/downloadTemplate', 'App\Http\Controllers\UserController@downloadTemplate')->name('users.downloadTemplate');
+    Route::post('/users/import', 'App\Http\Controllers\UserController@import')->name('users.import');
     Route::get('/users/export', 'App\Http\Controllers\UserController@export')->name('user.export');
 
     Route::get('/categories', 'App\Http\Controllers\CategoryController@index')->name('category.index');
