@@ -241,11 +241,11 @@ $(document).ready(function () {
                 <label for="editQuantity${editStockIndex}" class="form-label">Quantity</label>
                 <input type="number" class="form-control" id="editQuantity${editStockIndex}" name="stocks[${editStockIndex}][quantity]" value="${stock.quantity || ''}">
                 ${stock.id ? `<input type="hidden" name="stocks[${editStockIndex}][id]" value="${stock.id}">` : ''}
-                <button type="button" class="btn btn-danger btn-sm mt-2" onclick="removeEditStock(${editStockIndex})">Remove</button>
+                <button type="button" class="btn btn-danger btn-sm mt-2" data-stock-id="${stock.id}" onclick="removeEditStock(${editStockIndex})">Remove</button>
             </div>
         `;
         editStockContainer.append(stockHtml);
-
+    
         // Initialize Selectize for the new stock room and location selects
         const editStockRoomSelect = $(`#editStockRoom${editStockIndex}`);
         const editLocationSelect = $(`#editLocation${editStockIndex}`);
@@ -253,9 +253,9 @@ $(document).ready(function () {
         
         // Set the value of the stock room selectize control
         editStockRoomSelect[0].selectize.setValue(stock.stock_room);
-
+    
         editStockIndex++;
-    }
+    }       
 
     function initEditSelectize(stockRoomSelect, locationSelect) {
         stockRoomSelect.selectize({
@@ -295,8 +295,55 @@ $(document).ready(function () {
         return optionsHtml;
     }    
 
-    window.removeEditStock = function(index) {
-        $(`.stock-item[data-stock-index="${index}"]`).remove();
-    }
+    window.removeEditStock = function(editStockIndex) {
+        // Get the stock ID from the button's data attribute
+        var stockId = $(`#editStockRoom${editStockIndex}`).closest('.stock-item').find('button').data('stock-id');
+        
+        // Check if the stock ID is valid
+        if (stockId) {
+            // Set the data-stock-id attribute for the modal confirmation button
+            $('#confirmDeleteStockButton').data('stock-id', stockId);
+    
+            // Show the confirmation modal
+            $('#confirmDeleteStockModal').modal('show');
+        } else {
+            console.error('Stock ID not found for index:', editStockIndex);
+        }
+    }    
+    
+// Handle delete button click
+    $('.btn-delete-stock').click(function () {
+        var stockId = $(this).data('stock-id');
+        $('#confirmDeleteStockButton').data('stock-id', stockId); // Set stockId to modal button
+        $('#confirmDeleteStockModal').modal('show');
+    });
+
+    $('#confirmDeleteStockButton').click(function () {
+        var stockId = $(this).data('stock-id'); // Get the stock ID from the button data attribute
+        var token = $('meta[name="csrf-token"]').attr('content');
+    
+        $.ajax({
+            url: `/stocks/${stockId}`, // Make sure this URL matches your route definition
+            type: 'DELETE',
+            data: {
+                _token: token // Include the CSRF token
+            },
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    // Remove the stock item from the UI
+                    $(`button[data-stock-id="${stockId}"]`).closest('.stock-item').remove();
+                    $('#confirmDeleteStockModal').modal('hide'); // Hide the confirmation modal
+                } else {
+                    alert('Failed to delete stock.'); // Show an alert on failure
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+                // Handle error if needed
+            }
+        });
+    });
+           
     //PRODUCT CRUD END//
 });

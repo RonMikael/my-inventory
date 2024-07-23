@@ -254,4 +254,22 @@ class ProductController extends Controller
         
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
+
+    public function deleteStock(Request $request, $id)
+    {
+        $stock = Stock::find($id);
+    
+        if (!$stock) {
+            return response()->json(['success' => false, 'message' => 'Stock not found.'], 404);
+        }
+    
+        $stockRecords = StockRecord::where('stock_id', $id)->get();
+    
+        $stock->delete();
+        foreach ($stockRecords as $stockRecord) {
+            $stockRecord->delete();
+        }
+    
+        return response()->json(['success' => true]);
+    }    
 }

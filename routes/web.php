@@ -41,6 +41,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
     Route::post('/products/store', 'App\Http\Controllers\ProductController@store')->name('products.store');
     Route::put('/products/{product}', 'App\Http\Controllers\ProductController@update')->name('products.update');
     Route::get('/products/{product}/edit', 'App\Http\Controllers\ProductController@edit')->name('products.edit');
+    Route::delete('/stocks/{id}', 'App\Http\Controllers\ProductController@deleteStock')->name('stocks.delete');
 
     Route::get('/customer', 'App\Http\Controllers\CustomerController@index')->name('customer.index');
     Route::delete('/customers/{id}', 'App\Http\Controllers\CustomerController@destroy')->name('customers.destroy');
