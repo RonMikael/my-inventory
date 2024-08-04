@@ -17,4 +17,6 @@ class StockRecord extends Model
         'stock_room',
         'location',
     ];
+
+    
 }

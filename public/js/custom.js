@@ -22,6 +22,16 @@ $(document).ready(function () {
         });
     });
 
+    $('#btn-list-viewproduct').click(function () {
+        $('#list-viewproduct').removeClass('d-none');
+        $('#kanban-viewproduct').addClass('d-none');
+    });
+    
+    $('#btn-kanban-viewproduct').click(function () {
+        $('#kanban-viewproduct').removeClass('d-none');
+        $('#list-viewproduct').addClass('d-none');
+    });
+
     //PRODUCT CRUD START//
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInputProductIndex');
@@ -46,12 +56,28 @@ $(document).ready(function () {
 
     $('#size').selectize({
         create: true, // Allow creating new items
-        sortField: 'text' // Sort dropdown items by text
+        sortField: 'text', // Sort dropdown items by text
+        onType: function(str) {
+            this.setTextboxValue(str.toUpperCase());
+        }
     });
 
     $('#brand').selectize({
         create: true, // Allow creating new items
-        sortField: 'text' // Sort dropdown items by text
+        sortField: 'text', // Sort dropdown items by text
+        onType: function(str) {
+            this.setTextboxValue(str.toUpperCase());
+        }
+    });
+
+    $('#reference_number').on('input', function() {
+        var capitalized = $(this).val().toUpperCase();
+        $(this).val(capitalized);
+    });
+
+    $('#editReferenceNumber').on('input', function() {
+        var capitalized = $(this).val().toUpperCase();
+        $(this).val(capitalized);
     });
 
     function updateLocationOptions(stockRoomSelect, locationSelect) {
@@ -81,16 +107,24 @@ $(document).ready(function () {
                 <label for="stock_room_${stockCount}" class="form-label">Stock Room</label>
                 <select id="stock_room_${stockCount}" class="form-control stock-room-select" name="stocks[${stockCount}][stock_room]" required>
                     <option value="">Select Stock Room</option>
-                    <option value="Building 1">Building 1</option>
-                    <option value="Building 2">Building 2</option>
+                    <option value="BUILDING 2">BUILDING 2</option>
+                    <option value="DISPLAY">DISPLAY</option>
                 </select>
                 <label for="location_${stockCount}" class="form-label">Location</label>
                 <select id="location_${stockCount}" class="form-control location-select" name="stocks[${stockCount}][location]" required>
                     <option value="">Select Location</option>
-                    <option value="Rack 1" data-stock-room="Building 1">Rack 1</option>
-                    <option value="Rack 2" data-stock-room="Building 1">Rack 2</option>
-                    <option value="Rack A" data-stock-room="Building 2">Rack A</option>
-                    <option value="Rack B" data-stock-room="Building 2">Rack B</option>
+
+                                        <option value="HANGOVER" data-stock-room="BUILDING 2">HANGOVER</option>
+                                        <option value="RACK 9" data-stock-room="BUILDING 2">RACK 9</option>
+                                        <option value="RACK 1" data-stock-room="BUILDING 2">RACK 1</option>
+                                        <option value="RACK 2" data-stock-room="BUILDING 2">RACK 2</option>
+                                        <option value="RACK 3" data-stock-room="BUILDING 2">RACK 3</option>
+
+                                        <option value="RACK 1" data-stock-room="DISPLAY">RACK 1</option>
+                                        <option value="RACK 2" data-stock-room="DISPLAY">RACK 2</option>
+                                        <option value="RACK 3" data-stock-room="DISPLAY">RACK 3</option>
+                                        <option value="RACK 4" data-stock-room="DISPLAY">RACK 4</option>
+
                 </select>
                 <label for="quantity_${stockCount}" class="form-label">Quantity</label>
                 <input type="number" id="quantity_${stockCount}" class="form-control" name="stocks[${stockCount}][quantity]" required>
@@ -107,17 +141,25 @@ $(document).ready(function () {
     function initSelectize(stockRoomSelect, locationSelect) {
         stockRoomSelect.selectize({
             create: true, // Allow creating new items
-            sortField: 'text', // Sort dropdown items by text
+            sortField: 'text',
+            onType: function(str) {
+                this.setTextboxValue(str.toUpperCase());
+            }, // Sort dropdown items by text
             onChange: function(value) {
                 var locationSelectize = locationSelect[0].selectize;
                 var selectedStockRoom = value;
                 locationSelectize.clearOptions(); // Clear existing options
-                if (selectedStockRoom === 'Building 1') {
-                    locationSelectize.addOption({ value: 'Rack 1', text: 'Rack 1' });
-                    locationSelectize.addOption({ value: 'Rack 2', text: 'Rack 2' });
-                } else if (selectedStockRoom === 'Building 2') {
-                    locationSelectize.addOption({ value: 'Rack A', text: 'Rack A' });
-                    locationSelectize.addOption({ value: 'Rack B', text: 'Rack B' });
+                if (selectedStockRoom === 'BUILDING 2') {
+                    locationSelectize.addOption({ value: 'HANGOVER', text: 'HANGOVER' });
+                    locationSelectize.addOption({ value: 'RACK 9', text: 'RACK 9' });
+                    locationSelectize.addOption({ value: 'RACK 1', text: 'RACK 1' });
+                    locationSelectize.addOption({ value: 'RACK 2', text: 'RACK 2' });
+                    locationSelectize.addOption({ value: 'RACK 3', text: 'RACK 3' });
+                } else if (selectedStockRoom === 'DISPLAY') {
+                    locationSelectize.addOption({ value: 'RACK 1', text: 'RACK 1' });
+                    locationSelectize.addOption({ value: 'RACK 2', text: 'RACK 2' });
+                    locationSelectize.addOption({ value: 'RACK 3', text: 'RACK 3' });
+                    locationSelectize.addOption({ value: 'RACK 4', text: 'RACK 4' });
                 } else {
                 }
                 locationSelectize.refreshOptions();
@@ -126,7 +168,10 @@ $(document).ready(function () {
 
         locationSelect.selectize({
             create: true, // Allow creating new items
-            sortField: 'text' // Sort dropdown items by text
+            sortField: 'text', // Sort dropdown items by text
+            onType: function(str) {
+                this.setTextboxValue(str.toUpperCase());
+            }
         });
     }
 
@@ -149,13 +194,19 @@ $(document).ready(function () {
 
     var $editSize = $('#editSize').selectize({
         create: true, // Allow creating new items
-        sortField: 'text' // Sort dropdown items by text
+        sortField: 'text',
+        onType: function(str) {
+            this.setTextboxValue(str.toUpperCase());
+        } // Sort dropdown items by text
     });
 
     // Initialize selectize for brand
     var $editBrand = $('#editBrand').selectize({
         create: true, // Allow creating new items
-        sortField: 'text' // Sort dropdown items by text
+        sortField: 'text',
+        onType: function(str) {
+            this.setTextboxValue(str.toUpperCase());
+        } // Sort dropdown items by text
     });
 
     $('.btn-edit-product').click(function () {
@@ -225,9 +276,9 @@ $(document).ready(function () {
                     <label for="editStockRoom${editStockIndex}" class="form-label">Stock Room</label>
                     <select id="editStockRoom${editStockIndex}" class="form-control edit-stock-room-select" name="stocks[${editStockIndex}][stock_room]">
                         <option value="">Select Stock Room</option>
-                        <option value="Building 1" ${stock.stock_room === 'Building 1' ? 'selected' : ''}>Building 1</option>
-                        <option value="Building 2" ${stock.stock_room === 'Building 2' ? 'selected' : ''}>Building 2</option>
-                        ${stock.stock_room && !['Building 1', 'Building 2'].includes(stock.stock_room) ? `<option value="${stock.stock_room}" selected>${stock.stock_room}</option>` : ''}
+                        <option value="BUILDING 2" ${stock.stock_room === 'BUILDING 2' ? 'selected' : ''}>BUILDING 2</option>
+                        <option value="DISPLAY" ${stock.stock_room === 'DISPLAY' ? 'selected' : ''}>DISPLAY</option>
+                        ${stock.stock_room && !['BUILDING 2', 'DISPLAY'].includes(stock.stock_room) ? `<option value="${stock.stock_room}" selected>${stock.stock_room}</option>` : ''}
                     </select>
                 </div>
                 <div class="mb-3">
@@ -235,7 +286,7 @@ $(document).ready(function () {
                     <select id="editLocation${editStockIndex}" class="form-control edit-location-select" name="stocks[${editStockIndex}][location]">
                         <option value="">Select Location</option>
                         ${generateLocationOptions(stock.stock_room, stock.location)}
-                        ${stock.location && !['Rack 1', 'Rack 2', 'Rack A', 'Rack B'].includes(stock.location) ? `<option value="${stock.location}" selected>${stock.location}</option>` : ''}
+                        ${stock.location && !['HANGOVER', 'RACK 9', 'RACK 1', 'RACK 2', 'RACK 3', 'RACK 1', 'RACK 2', 'RACK 3', 'RACK 4'].includes(stock.location) ? `<option value="${stock.location}" selected>${stock.location}</option>` : ''}
                     </select>
                 </div>
                 <label for="editQuantity${editStockIndex}" class="form-label">Quantity</label>
@@ -261,16 +312,24 @@ $(document).ready(function () {
         stockRoomSelect.selectize({
             create: true, // Allow creating new items
             sortField: 'text', // Sort dropdown items by text
-            allowEmptyOption: true, // Allow empty option for custom input
+            allowEmptyOption: true,
+            onType: function(str) {
+                this.setTextboxValue(str.toUpperCase());
+            }, // Allow empty option for custom input
             onChange: function (value) {
                 const locationSelectize = locationSelect[0].selectize;
                 locationSelectize.clearOptions(); // Clear existing options
-                if (value === 'Building 1') {
-                    locationSelectize.addOption({ value: 'Rack 1', text: 'Rack 1' });
-                    locationSelectize.addOption({ value: 'Rack 2', text: 'Rack 2' });
-                } else if (value === 'Building 2') {
-                    locationSelectize.addOption({ value: 'Rack A', text: 'Rack A' });
-                    locationSelectize.addOption({ value: 'Rack B', text: 'Rack B' });
+                if (value === 'BUILDING 2') {
+                    locationSelectize.addOption({ value: 'HANGOVER', text: 'HANGOVER' });
+                    locationSelectize.addOption({ value: 'RACK 9', text: 'RACK 9' });
+                    locationSelectize.addOption({ value: 'RACK 1', text: 'RACK 1' });
+                    locationSelectize.addOption({ value: 'RACK 2', text: 'RACK 2' });
+                    locationSelectize.addOption({ value: 'RACK 3', text: 'RACK 3' });
+                } else if (value === 'DISPLAY') {
+                    locationSelectize.addOption({ value: 'RACK 1', text: 'RACK 1' });
+                    locationSelectize.addOption({ value: 'RACK 2', text: 'RACK 2' });
+                    locationSelectize.addOption({ value: 'RACK 3', text: 'RACK 3' });
+                    locationSelectize.addOption({ value: 'RACK 4', text: 'RACK 4' });
                 }
                 locationSelectize.refreshOptions();
             }
@@ -278,18 +337,26 @@ $(document).ready(function () {
 
         locationSelect.selectize({
             create: true, // Allow creating new items
-            sortField: 'text' // Sort dropdown items by text
+            sortField: 'text',
+            onType: function(str) {
+                this.setTextboxValue(str.toUpperCase());
+            } // Sort dropdown items by text
         });
     }  
     
     function generateLocationOptions(stockRoom, selectedLocation) {
         let optionsHtml = '';
-        if (stockRoom === 'Building 1') {
-            optionsHtml += `<option value="Rack 1" ${selectedLocation === 'Rack 1' ? 'selected' : ''}>Rack 1</option>`;
-            optionsHtml += `<option value="Rack 2" ${selectedLocation === 'Rack 2' ? 'selected' : ''}>Rack 2</option>`;
-        } else if (stockRoom === 'Building 2') {
-            optionsHtml += `<option value="Rack A" ${selectedLocation === 'Rack A' ? 'selected' : ''}>Rack A</option>`;
-            optionsHtml += `<option value="Rack B" ${selectedLocation === 'Rack B' ? 'selected' : ''}>Rack B</option>`;
+        if (stockRoom === 'BUILDING 2') {
+            optionsHtml += `<option value="HANGOVER" ${selectedLocation === 'HANGOVER' ? 'selected' : ''}>HANGOVER</option>`;
+            optionsHtml += `<option value="RACK 9" ${selectedLocation === 'RACK 9' ? 'selected' : ''}>RACK 9</option>`;
+            optionsHtml += `<option value="RACK 1" ${selectedLocation === 'RACK 1' ? 'selected' : ''}>RACK 1</option>`;
+            optionsHtml += `<option value="RACK 2" ${selectedLocation === 'RACK 2' ? 'selected' : ''}>RACK 2</option>`;
+            optionsHtml += `<option value="RACK 3" ${selectedLocation === 'RACK 3' ? 'selected' : ''}>RACK 3</option>`;
+        } else if (stockRoom === 'DISPLAY') {
+            optionsHtml += `<option value="RACK 1" ${selectedLocation === 'RACK 1' ? 'selected' : ''}>RACK 1</option>`;
+            optionsHtml += `<option value="RACK 2" ${selectedLocation === 'RACK 2' ? 'selected' : ''}>RACK 2</option>`;
+            optionsHtml += `<option value="RACK 3" ${selectedLocation === 'RACK 3' ? 'selected' : ''}>RACK 3</option>`;
+            optionsHtml += `<option value="RACK 4" ${selectedLocation === 'RACK 4' ? 'selected' : ''}>RACK 4</option>`;
         } else {
         }
         return optionsHtml;
