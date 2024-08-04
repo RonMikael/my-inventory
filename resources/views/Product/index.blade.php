@@ -25,7 +25,10 @@
     @endif
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Product List</h2>
+        <div>
+            <h2 class="mb-0">Product List</h2>
+            <p class="text-muted mb-0">Price Range: ${{ $minPrice }} - ${{ $maxPrice }}</p> <!-- Displaying min and max price -->
+        </div>
         <div class="d-flex">
             <div class="btn-group me-2">
                 <button type="button" class="btn btn-outline-secondary" id="btn-list-viewproduct">

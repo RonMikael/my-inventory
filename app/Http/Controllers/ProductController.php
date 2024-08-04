@@ -57,7 +57,10 @@ class ProductController extends Controller
 
         $categories = Category::all();
 
-        return view('product.index', compact('products', 'categories', 'search', 'perPage'));
+        $minPrice = Product::min('price');
+        $maxPrice = Product::max('price');
+
+        return view('product.index', compact('products', 'categories', 'search', 'perPage', 'minPrice', 'maxPrice'));
     }
 
     /**
