@@ -334,7 +334,7 @@ class ProductController extends Controller
                     })
                     ->orWhereHas('stocks', function ($query) use ($search) {
                         $query->where('stock_room', 'like', '%' . $search . '%')
-                                ->orWhere('location', 'like', '%' . $search . '%');
+                            ->orWhere('location', 'like', '%' . $search . '%');
                     });
             });
         }
@@ -351,12 +351,13 @@ class ProductController extends Controller
         // Prepare CSV data
         $callback = function() use ($products) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['ID', 'Size', 'Reference Number', 'Price', 'Brand', 'Category', 'Total Stock Quantity']); // CSV header
 
+            // CSV header for the main product data
+            fputcsv($file, ['Product ID', 'Size', 'Reference Number', 'Price', 'Brand', 'Category']); 
+
+            // Loop through each product
             foreach ($products as $product) {
-                // Calculate total stock quantity for each product
-                $totalStockQuantity = $product->stocks->sum('quantity');
-
+                // Main product row
                 fputcsv($file, [
                     $product->id,
                     $product->size,
@@ -364,8 +365,33 @@ class ProductController extends Controller
                     $product->price,
                     $product->brand,
                     $product->category->name, // Assuming category relationship is defined
-                    $totalStockQuantity,
                 ]);
+
+                // Check if the product has stocks
+                if ($product->stocks->isNotEmpty()) {
+                    // Header for stocks associated with this product
+                    fputcsv($file, ['', 'Stock Room', 'Location', 'Quantity']); // Indent stock details
+
+                    $totalStockQuantity = 0;
+
+                    // Loop through each stock for the product
+                    foreach ($product->stocks as $stock) {
+                        fputcsv($file, [
+                            '', // Empty cell for indentation
+                            $stock->stock_room, // Stock room
+                            $stock->location,   // Location
+                            $stock->quantity,   // Quantity
+                        ]);
+
+                        $totalStockQuantity += $stock->quantity; // Sum up the total quantity
+                    }
+
+                    // Row for total stock quantity
+                    fputcsv($file, ['', '', 'Total Stock', $totalStockQuantity]); // Indented with "Total Stock"
+                }
+
+                // Add an empty row between different products for better separation
+                fputcsv($file, []);
             }
 
             fclose($file);
