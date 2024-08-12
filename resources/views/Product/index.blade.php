@@ -79,178 +79,177 @@
         </div>
     </div>
 
-    <div id="list-viewproduct">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-light">
-                    <tr>
-                            <th class="text-center">Size</th>
-                            <th class="text-center">Reference Number</th>
-                            <th class="text-center">Price</th>
-                            <th class="text-center">Brand</th>
-                            <th class="text-center">Category</th>
-                            <th class="text-center">Stocks</th>
-                            <th class="text-center">Images</th>
-                            <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                        @forelse($products as $product)
-                            <tr>
-                                <td>{{ $product->size }}</td>
-                                <td>{{ $product->reference_number }}</td>
-                                <td>{{ $product->price }}</td>
-                                <td>{{ $product->brand }}</td>
-                                <td>{{ $product->category->name }}</td>
-                                <td>
-                                    <!-- Button to toggle stock details -->
-                                    <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#stocks-{{ $product->id }}" aria-expanded="false" aria-controls="stocks-{{ $product->id }}">
-                                        Show Stocks (Total: {{ $product->total_stock_quantity }})
-                                    </button>
-                                    <!-- Collapsible section for stock details -->
-                                    <div class="collapse mt-2" id="stocks-{{ $product->id }}">
-                                        <table class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center">Stock Room</th>
-                                                    <th class="text-center">Location</th>
-                                                    <th class="text-center">Quantity</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($product->stocks as $stock)
+        <div id="list-viewproduct">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                                <th class="text-center">Size</th>
+                                <th class="text-center">Reference Number</th>
+                                <th class="text-center">Price</th>
+                                <th class="text-center">Brand</th>
+                                <th class="text-center">Category</th>
+                                <th class="text-center">Stocks</th>
+                                <th class="text-center">Images</th>
+                                <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            @forelse($products as $product)
+                                <tr>
+                                    <td>{{ $product->size }}</td>
+                                    <td>{{ $product->reference_number }}</td>
+                                    <td>{{ $product->price }}</td>
+                                    <td>{{ $product->brand }}</td>
+                                    <td>{{ $product->category->name }}</td>
+                                    <td>
+                                        <!-- Button to toggle stock details -->
+                                        <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#stocks-{{ $product->id }}" aria-expanded="false" aria-controls="stocks-{{ $product->id }}">
+                                            Show Stocks (Total: {{ $product->total_stock_quantity }})
+                                        </button>
+                                        <!-- Collapsible section for stock details -->
+                                        <div class="collapse mt-2" id="stocks-{{ $product->id }}">
+                                            <table class="table table-striped">
+                                                <thead>
                                                     <tr>
-                                                        <td class="text-center">{{ $stock->stock_room }}</td>
-                                                        <td class="text-center">{{ $stock->location }}</td>
-                                                        <td class="text-center">{{ $stock->quantity }}</td>
+                                                        <th class="text-center">Stock Room</th>
+                                                        <th class="text-center">Location</th>
+                                                        <th class="text-center">Quantity</th>
                                                     </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </td>
-                                <td>
-                                    @if($product->images->count() > 0)
-                                        <div id="carousel-{{ $product->id }}" class="carousel slide">
-                                            <div class="carousel-inner">
-                                                @foreach ($product->images as $index => $image)
-                                                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                        <img src="{{ Storage::url($image->image_path) }}" alt="Product Image" class="d-block w-100" style="width: 50px; height: 50px;">
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $product->id }}" data-bs-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Previous</span>
-                                            </button>
-                                            <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ $product->id }}" data-bs-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Next</span>
-                                            </button>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($product->stocks as $stock)
+                                                        <tr>
+                                                            <td class="text-center">{{ $stock->stock_room }}</td>
+                                                            <td class="text-center">{{ $stock->location }}</td>
+                                                            <td class="text-center">{{ $stock->quantity }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    @else
-                                        <p>No images available</p>
-                                    @endif
-                                </td>                                                      
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-primary btn-sm btn-edit-product" data-product-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
-                                    <form id="deleteProductForm" action="{{ route('products.destroy', $product) }}" method="POST" style="display: inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteProductModal" data-product-id="{{ $product->id }}">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center">No Product found.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-            </table>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                    {{ $products->appends(['perPage' => $perPage])->links() }}
-                </ul>
-            </nav>
-        </div>
-    </div>
-
-    <div id="kanban-viewproduct" class="d-none">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @forelse($products as $product)
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $product->brand }}</h5>
-                            <p class="card-text"><strong>Size:</strong> {{ $product->size }}</p>
-                            <p class="card-text"><strong>Reference Number:</strong> {{ $product->reference_number }}</p>
-                            <p class="card-text"><strong>Price:</strong> {{ $product->price }}</p>
-                            <p class="card-text"><strong>Category:</strong> {{ $product->category->name }}</p>
-                            <button type="button" class="btn btn-info btn-sm btn-view-product"
-                                    data-product-id="{{ $product->id }}">View</button>
-                            <button class="btn btn-primary btn-sm btn-edit-product"
-                                    data-product-id="{{ $product->id }}">Edit</button>
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#confirmDeleteProductModal" data-product-id="{{ $product->id }}">Delete
-                            </button>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#stocks-{{ $product->id }}" aria-expanded="false"
-                                        aria-controls="stocks-{{ $product->id }}">
-                                    Show Stocks (Total: {{ $product->total_stock_quantity }})
-                                </button>
-                                <div class="collapse mt-2" id="stocks-{{ $product->id }}">
-                                    <ul class="list-group">
-                                        @foreach ($product->stocks as $stock)
-                                            <li class="list-group-item">
-                                                <strong>Stock Room:</strong> {{ $stock->stock_room }}<br>
-                                                <strong>Location:</strong> {{ $stock->location }}<br>
-                                                <strong>Quantity:</strong> {{ $stock->quantity }}
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </li>
-                            <li class="list-group-item">
-                                @if($product->images->count() > 0)
-                                    <div id="carousel-{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
-                                        <div class="carousel-inner">
-                                            @foreach ($product->images as $index => $image)
-                                                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                    <img src="{{ Storage::url($image->image_path) }}"
-                                                        class="d-block w-100" style="height: 150px; object-fit: cover;"
-                                                        alt="Product Image">
+                                    </td>
+                                    <td>
+                                        @if($product->images->count() > 0)
+                                            <div id="carousel-{{ $product->id }}" class="carousel slide">
+                                                <div class="carousel-inner">
+                                                    @foreach ($product->images as $index => $image)
+                                                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                                                            <img src="{{ Storage::url($image->image_path) }}" alt="Product Image" class="d-block w-100" style="width: 50px; height: 50px;">
+                                                        </div>
+                                                    @endforeach
                                                 </div>
-                                            @endforeach
-                                        </div>
-                                        <button class="carousel-control-prev" type="button"
-                                                data-bs-target="#carousel-{{ $product->id }}" data-bs-slide="prev">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Previous</span>
-                                        </button>
-                                        <button class="carousel-control-next" type="button"
-                                                data-bs-target="#carousel-{{ $product->id }}" data-bs-slide="next">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="visually-hidden">Next</span>
-                                        </button>
-                                    </div>
-                                @else
-                                    <p>No images available</p>
-                                @endif
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            @empty
-                <div class="col">
-                    <p class="text-center">No Product found.</p>
-                </div>
-            @endforelse
+                                                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ $product->id }}" data-bs-slide="prev">
+                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span class="visually-hidden">Previous</span>
+                                                </button>
+                                                <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ $product->id }}" data-bs-slide="next">
+                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span class="visually-hidden">Next</span>
+                                                </button>
+                                            </div>
+                                        @else
+                                            <p>No images available</p>
+                                        @endif
+                                    </td>                                                      
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-primary btn-sm btn-edit-product" data-product-id="{{ $product->id }}" data-bs-toggle="modal" data-bs-target="#editProductModal">Edit</button>
+                                        <form id="deleteProductForm" action="{{ route('products.destroy', $product) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteProductModal" data-product-id="{{ $product->id }}">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center">No Product found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {{ $products->appends(['perPage' => $perPage])->links() }}
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </div>
+
+        <div id="kanban-viewproduct" class="d-none">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @forelse($products as $product)
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $product->brand }}</h5>
+                                <p class="card-text"><strong>Size:</strong> {{ $product->size }}</p>
+                                <p class="card-text"><strong>Reference Number:</strong> {{ $product->reference_number }}</p>
+                                <p class="card-text"><strong>Price:</strong> {{ $product->price }}</p>
+                                <p class="card-text"><strong>Category:</strong> {{ $product->category->name }}</p>
+                                <button class="btn btn-primary btn-sm btn-edit-product"
+                                        data-product-id="{{ $product->id }}">Edit</button>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#confirmDeleteProductModal" data-product-id="{{ $product->id }}">Delete
+                                </button>
+                            </div>
+                            <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+        <button class="btn btn-info btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#stocks-{{ $product->id }}" aria-expanded="false"
+                aria-controls="stocks-{{ $product->id }}">
+            Show Stocks (Total: {{ $product->total_stock_quantity }})
+        </button>
+        <div class="collapse mt-2" id="stocks-{{ $product->id }}">
+            <ul class="list-group">
+                @foreach ($product->stocks as $stock)
+                    <li class="list-group-item">
+                        <strong>Stock Room:</strong> {{ $stock->stock_room }}<br>
+                        <strong>Location:</strong> {{ $stock->location }}<br>
+                        <strong>Quantity:</strong> {{ $stock->quantity }}
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </li>
+    <li class="list-group-item">
+        @if($product->images->count() > 0)
+            <div id="kanban-carousel-{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach ($product->images as $index => $image)
+                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                            <img src="{{ Storage::url($image->image_path) }}"
+                                class="d-block w-100" style="height: 150px; object-fit: cover;"
+                                alt="Product Image">
+                        </div>
+                    @endforeach
+                </div>
+                <button class="carousel-control-prev" type="button"
+                        data-bs-target="#kanban-carousel-{{ $product->id }}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button"
+                        data-bs-target="#kanban-carousel-{{ $product->id }}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        @else
+            <p>No images available</p>
+        @endif
+    </li>
+</ul>
+
+                        </div>
+                    </div>
+                @empty
+                    <div class="col">
+                        <p class="text-center">No Product found.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
 
 
 <!-- Modals -->

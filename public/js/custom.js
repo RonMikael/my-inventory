@@ -12,15 +12,22 @@ $(document).ready(function () {
     $('#searchInputProduct').on('input', function () {
         var searchText = $(this).val().toLowerCase();
         $('.product-item').each(function () {
-            var productName = $(this).find('.card-title').text().toLowerCase();
-            var categoryName = $(this).find('.card-text').first().text().toLowerCase();
-            if (productName.includes(searchText) || categoryName.includes(searchText)) {
+            // Concatenate only the brand, category, and size into one string
+            var productBrand = $(this).find('.card-title').text().toLowerCase();
+            var productCategory = $(this).find('.card-text:contains("Category")').text().toLowerCase();
+            var productSize = $(this).find('.card-text:contains("Size")').text().toLowerCase();
+            
+            // Combine brand, category, and size into one searchable string
+            var productDetails = productBrand + ' ' + productCategory + ' ' + productSize;
+    
+            // Show or hide the product based on search text
+            if (productDetails.includes(searchText)) {
                 $(this).show();
             } else {
                 $(this).hide();
             }
         });
-    });
+    });    
 
     $('#btn-list-viewproduct').click(function () {
         $('#list-viewproduct').removeClass('d-none');

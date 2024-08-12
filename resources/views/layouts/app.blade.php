@@ -18,6 +18,7 @@
 
     <!-- Custom CSS -->
     <link href="{{ asset('css/custom.css')}}" rel="stylesheet">
+    <link href="{{ asset('css/cart.css')}}" rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -98,5 +99,6 @@
     <script src="{{ asset('js/category.js')}}"></script>
     <script src="{{ asset('js/user.js')}}"></script>
     <script src="{{ asset('js/customer.js')}}"></script>
+    <script src="{{ asset('js/cart.js')}}"></script>
 </body>
 </html>
