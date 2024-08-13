@@ -134,18 +134,19 @@ class EcommerceController extends Controller
     public function selectCustomer(Request $request)
     {
         $customerId = $request->input('customer_id');
-        // Add logic to save selected customer to the session or database
+        $customer = Customer::find($customerId);
         session()->put('selected_customer', $customerId);
+        session()->put('selected_customer_name', $customer ? $customer->name : 'Select Customer');
         return response()->json(['success' => true]);
     }
 
     public function selectPaymentMethod(Request $request)
     {
         $paymentMethod = $request->input('payment_method');
-        // Save payment method to session or database
         session()->put('selected_payment_method', $paymentMethod);
         return response()->json(['success' => true]);
     }
+
 
     public function updatePrice(Request $request, $id)
     {

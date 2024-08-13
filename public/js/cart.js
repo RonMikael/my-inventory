@@ -1,4 +1,15 @@
 $(document).ready(function () {
+    // Use the URLs defined in the Blade template
+    var selectCustomerUrl = window.selectCustomerUrl;
+    var selectPaymentMethodUrl = window.selectPaymentMethodUrl;
+
+    // Set up CSRF token in AJAX headers
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     // Display the quantity limit modal if there's an error
     if ($('#quantityLimitMessage').text().trim() !== '') {
         $('#quantityLimitModal').show();
@@ -27,19 +38,17 @@ $(document).ready(function () {
     // Handle customer selection
     $('#customerList').on('click', '.customer-item', function () {
         var customerId = $(this).data('id');
+        var customerName = $(this).data('name');
         $.ajax({
-            url: '{{ route("cart.selectCustomer") }}',
+            url: '/cart/select-customer',
             method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                customer_id: customerId
-            },
+            data: { customer_id: customerId },
             success: function (response) {
-                $('#customerModal').hide();
-                location.reload(); // Optionally reload the page to reflect changes
+                $('#customerModal').modal('hide');
+                $('#customerButton').html('<i class="bi bi-person-circle"></i> ' + customerName);
             },
-            error: function () {
-                alert('Error selecting customer');
+            error: function (xhr) {
+                alert('Error selecting customer: ' + xhr.status + ' ' + xhr.statusText);
             }
         });
     });
@@ -57,18 +66,15 @@ $(document).ready(function () {
     $('#paymentList').on('click', '.payment-item', function () {
         var paymentMethod = $(this).data('method');
         $.ajax({
-            url: '{{ route("cart.selectPaymentMethod") }}',
+            url: '/cart/select-payment-method',
             method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                payment_method: paymentMethod
-            },
+            data: { payment_method: paymentMethod },
             success: function (response) {
-                $('#paymentMethodModal').hide();
-                location.reload(); // Optionally reload the page to reflect changes
+                $('#paymentMethodModal').modal('hide');
+                $('#paymentMethodButton').html('<i class="bi bi-credit-card"></i> ' + paymentMethod);
             },
-            error: function () {
-                alert('Error selecting payment method');
+            error: function (xhr) {
+                alert('Error selecting payment method: ' + xhr.status + ' ' + xhr.statusText);
             }
         });
     });

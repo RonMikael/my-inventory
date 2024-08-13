@@ -6,12 +6,12 @@
             <!-- Left Column: Customer, Payment, and Cart Summary -->
             <div class="col-md-4">
                 <!-- Customer Selection -->
-                <button type="button" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#customerModal">
+                <button type="button" id="customerButton" class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#customerModal">
                     <i class="bi bi-person-circle"></i> Select Customer
                 </button>
 
                 <!-- Payment Method Selection -->
-                <button type="button" class="btn btn-secondary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#paymentMethodModal">
+                <button type="button" id="paymentMethodButton" class="btn btn-secondary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#paymentMethodModal">
                     <i class="bi bi-credit-card"></i> Select Payment Method
                 </button>
 
@@ -26,7 +26,7 @@
                         <ul class="list-group mb-3">
                             @forelse(session('cart') as $id => $details)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>{{ $details['brand'] }} - {{ $details['size'] }} - Quantity: {{ $details['quantity'] }}</span>
+                                    <span>{{ $details['brand'] }} | {{ $details['size'] }} | Quantity: {{ $details['quantity'] }}</span>
                                 </li>
                             @empty
                                 <li class="list-group-item">No items in cart.</li>
@@ -116,8 +116,8 @@
                     <input type="text" id="customerSearch" class="form-control mb-3" placeholder="Search for customers...">
                     <div class="list-group" id="customerList">
                         @foreach($customers as $customer)
-                            <button type="button" class="list-group-item list-group-item-action customer-item" data-id="{{ $customer->id }}">
-                                <i class="bi bi-person"></i> {{ $customer->name }} - {{ $customer->email }} - {{ $customer->phone }}
+                            <button type="button" class="list-group-item list-group-item-action customer-item" data-id="{{ $customer->id }}" data-name="{{ $customer->name }}">
+                                <i class="bi bi-person"></i> {{ $customer->name }} - {{ $customer->address }}
                             </button>
                         @endforeach
                     </div>
