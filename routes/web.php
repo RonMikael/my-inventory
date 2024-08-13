@@ -58,6 +58,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('/product-carts', 'App\Http\Controllers\EcommerceController@index')->name('product.index');
 
+Route::post('/cart/select-branch', 'App\Http\Controllers\EcommerceController@selectBranch')->name('cart.selectBranch');
 Route::post('/cart/select-customer', 'App\Http\Controllers\EcommerceController@selectCustomer')->name('cart.selectCustomer');
 Route::post('/cart/select-payment-method', 'App\Http\Controllers\EcommerceController@selectPaymentMethod')->name('cart.selectPaymentMethod');
 Route::put('/cart/update-price/{id}', 'App\Http\Controllers\EcommerceController@updatePrice')->name('cart.updatePrice');

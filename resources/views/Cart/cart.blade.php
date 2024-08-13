@@ -5,6 +5,22 @@
         <div class="row">
             <!-- Sidebar for Customer, Payment, Cart Summary -->
             <div class="col-md-3 bg-light p-3">
+
+                <!-- Branch Selector Dropdown -->
+                <div class="dropdown mb-3">
+                    <button class="btn btn-info w-100 rounded-pill shadow-sm d-flex align-items-center justify-content-between px-4 py-2 dropdown-toggle" type="button" id="branchDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-building fs-4 me-2"></i> 
+                        <span id="selectedBranch" class="fw-semibold">Select Branch</span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="branchDropdown" id="branchList">
+                        @foreach($branches as $branch)
+                            <li><a class="dropdown-item branch-item" href="#" data-id="{{ $branch->id }}" data-name="{{ $branch->name }}">
+                                <i class="bi bi-building text-primary"></i> {{ $branch->name }} - {{ $branch->location }}
+                            </a></li>
+                        @endforeach
+                    </ul>
+                </div>
+
                 <!-- Customer Selection -->
                 <button type="button" id="customerButton" class="btn btn-primary w-100 mb-3 rounded-pill shadow-sm d-flex align-items-center justify-content-between px-4 py-2" data-bs-toggle="modal" data-bs-target="#customerModal">
                     <i class="bi bi-person-circle fs-4 me-2"></i> 
@@ -18,36 +34,65 @@
                 </button>
 
                 <!-- Cart Summary -->
-                <div class="card mb-4 shadow-lg border-light">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Cart Summary</h5>
-                        <span class="badge bg-warning text-dark">{{ count(session('cart')) }} items</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <p class="card-text mb-0">Total:</p>
-                            <h4 class="card-title mb-0 fw-bold text-success">₱{{ number_format($total, 2) }}</h4>
-                        </div>
-                        <h6 class="mb-4">Product List</h6>
-                        <ul class="list-group list-group-flush mb-4">
-                            @forelse(session('cart') as $id => $details)
-                                <li class="list-group-item d-flex justify-content-between align-items-center border-0">
-                                    <div>
-                                        <h6 class="mb-1">{{ $details['brand'] }}</h6>
-                                        <p class="mb-0 text-muted">{{ $details['size'] }} | Qty: {{ $details['quantity'] }}</p>
-                                    </div>
-                                    <span class="badge bg-light text-dark">₱{{ number_format($details['price'] * $details['quantity'], 2) }}</span>
-                                </li>
-                            @empty
-                                <li class="list-group-item text-center text-muted border-0">No items in cart.</li>
-                            @endforelse
-                        </ul>
-                        <form action="{{ route('cart.checkout') }}" method="POST" class="d-grid">
-                            @csrf
-                            <button type="submit" class="btn btn-primary btn-lg">Proceed to Checkout</button>
-                        </form>
-                    </div>
+            <div class="card mb-4 shadow-lg border-light">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Cart Summary</h5>
+                    <span class="badge bg-warning text-dark">{{ count(session('cart')) }} items</span>
                 </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <p class="card-text mb-0">Total:</p>
+                        <h4 class="card-title mb-0 fw-bold text-success">₱{{ number_format($total, 2) }}</h4>
+                    </div>
+
+                    <!-- Freebies Selection -->
+                    <div class="mb-3">
+                        <label for="freebieDropdown" class="form-label">Freebie</label>
+                        <select id="freebieDropdown" class="form-select">
+                            <option value="none">None</option>
+                            @foreach($freebies as $freebie)
+                                <option value="{{ $freebie->id }}">{{ $freebie->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Discount Selection -->
+                    <div class="mb-3">
+                        <label for="discountDropdown" class="form-label">Discount</label>
+                        <select id="discountDropdown" class="form-select">
+                            <option value="none">None</option>
+                            <option value="amount">Amount</option>
+                            <option value="percentage">Percentage</option>
+                        </select>
+                        <div id="discountValue" class="mt-2 d-none">
+                            <label for="discountInput" class="form-label">Discount Value</label>
+                            <input type="number" id="discountInput" class="form-control" placeholder="Enter discount value">
+                        </div>
+                    </div>
+
+                    <h6 class="mb-4">Product List</h6>
+                    <ul class="list-group list-group-flush mb-4">
+                        @forelse(session('cart') as $id => $details)
+                            <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+                                <div>
+                                    <h6 class="mb-1">{{ $details['brand'] }}</h6>
+                                    <p class="mb-0 text-muted">{{ $details['size'] }} | Qty: {{ $details['quantity'] }}</p>
+                                </div>
+                                <span class="badge bg-light text-dark">₱{{ number_format($details['price'] * $details['quantity'], 2) }}</span>
+                            </li>
+                        @empty
+                            <li class="list-group-item text-center text-muted border-0">No items in cart.</li>
+                        @endforelse
+                    </ul>
+                    <form action="{{ route('cart.checkout') }}" method="POST" class="d-grid">
+                        @csrf
+                        <input type="hidden" name="freebie_id" id="freebieInput" value="none">
+                        <input type="hidden" name="discount_type" id="discountTypeInput" value="none">
+                        <input type="hidden" name="discount_value" id="discountValueInput" value="0">
+                        <button type="submit" class="btn btn-primary btn-lg">Proceed to Checkout</button>
+                    </form>
+                </div>
+            </div>
             </div>
 
             <!-- Main Content: Cart Items -->

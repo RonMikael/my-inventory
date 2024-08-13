@@ -8,6 +8,8 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\Customer;
+use App\Models\Branch;
+use App\Models\Freebie;
 
 class EcommerceController extends Controller
 {
@@ -76,15 +78,17 @@ class EcommerceController extends Controller
 
     public function cart()
     {
-        $cart = session()->get('cart', []); // Retrieve cart from session or set it to an empty array
-        $customers = Customer::all(); // Retrieve all customers
-
+        $cart = session()->get('cart', []);
+        $customers = Customer::all();
+        $branches = Branch::all();
+        $freebies = Freebie::all(); // Assuming you have a Freebie model
         $total = 0;
+
         foreach ($cart as $id => $details) {
             $total += $details['price'] * $details['quantity'];
         }
 
-        return view('cart.cart', compact('cart', 'customers', 'total'));
+        return view('cart.cart', compact('cart', 'customers', 'branches', 'freebies', 'total'));
     }
 
     public function updateCart(Request $request, $id)
@@ -167,4 +171,16 @@ class EcommerceController extends Controller
         return redirect()->route('cart.cart')->with('error', 'Product not in cart.');
     }
 
+    public function selectBranch(Request $request)
+    {
+        $branchId = $request->input('branch_id');
+        $branch = Branch::find($branchId);
+
+        if ($branch) {
+            session(['selected_branch' => $branchId]);
+            return response()->json(['success' => true, 'branch' => $branch]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Branch not found'], 404);
+        }
+    }
 }

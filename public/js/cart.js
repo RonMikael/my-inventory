@@ -78,4 +78,47 @@ $(document).ready(function () {
             }
         });
     });
+
+    // Handle branch selection
+    $('#branchList').on('click', '.branch-item', function (e) {
+        e.preventDefault(); // Prevent default anchor behavior
+        var branchId = $(this).data('id');
+        var branchName = $(this).data('name');
+        $.ajax({
+            url: '/cart/select-branch',
+            method: 'POST',
+            data: { branch_id: branchId },
+            success: function (response) {
+                $('#selectedBranch').text(branchName);
+                $('#branchDropdown').dropdown('hide'); // Hide dropdown
+            },
+            error: function (xhr) {
+                alert('Error selecting branch: ' + xhr.status + ' ' + xhr.statusText);
+            }
+        });
+    });
+
+    // Handle freebie selection
+    $('#freebieDropdown').on('change', function () {
+        var freebieId = $(this).val();
+        $('#freebieInput').val(freebieId);
+    });
+
+    // Handle discount type selection
+    $('#discountDropdown').on('change', function () {
+        var discountType = $(this).val();
+        $('#discountTypeInput').val(discountType);
+        if (discountType === 'amount' || discountType === 'percentage') {
+            $('#discountValue').removeClass('d-none');
+        } else {
+            $('#discountValue').addClass('d-none');
+            $('#discountValueInput').val(0);
+        }
+    });
+
+    // Handle discount value input
+    $('#discountInput').on('input', function () {
+        var discountValue = $(this).val();
+        $('#discountValueInput').val(discountValue);
+    });
 });
