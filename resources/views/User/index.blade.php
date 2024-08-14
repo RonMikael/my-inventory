@@ -1,99 +1,140 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">User List</h2>
-        <div class="d-flex">
-            <div class="btn-group me-2">
-                <button type="button" class="btn btn-outline-secondary" id="btn-list-viewuser">
-                    <i class="bi bi-list"></i>
-                </button>
-                <button type="button" class="btn btn-outline-secondary" id="btn-kanban-viewuser">
-                    <i class="bi bi-kanban"></i>
-                </button>
+    <div class="container">
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
             </div>
-            <div class="btn-group me-2">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" style="min-width: 200px;"> <!-- Adjust min-width here as needed -->
-                    <li>
-                        <div class="d-flex flex-column px-3"> <!-- Add padding on left and right sides -->
-                            <a href="{{ route('user.export', ['search' => $search]) }}" class="btn btn-success my-1">Export</a> <!-- Adjust margin as needed -->
-                            <button type="button" class="btn btn-secondary my-1" data-bs-toggle="modal" data-bs-target="#importUserModal">Import</button> <!-- Adjust margin as needed -->
-                        </div>
-                    </li>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
                 </ul>
             </div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button>
-        </div>
-    </div>
+        @endif
 
-    <div class="row">
-        <div class="col-md-6">
-            <form action="{{ route('user.index') }}" method="GET" class="mb-3">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search users..." value="{{ $search }}">
-                    <button type="submit" class="btn btn-outline-secondary">Search</button>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">User List</h2>
+            <div class="d-flex">
+                <div class="btn-group me-2">
+                    <button type="button" class="btn btn-outline-secondary" id="btn-list-viewuser">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="btn-kanban-viewuser">
+                        <i class="bi bi-kanban"></i>
+                    </button>
                 </div>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <form action="{{ route('user.index') }}" method="GET" class="mb-3">
-                <div class="input-group">
-                    <label class="input-group-text" for="perPageSelect">Items per page:</label>
-                    <select class="form-select" id="perPageSelect" name="perPage" onchange="this.form.submit()">
-                        <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
-                        <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                        <option value="15" {{ $perPage == 15 ? 'selected' : '' }}>15</option>
-                        <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
-                    </select>
+                <div class="btn-group me-2">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="bi bi-gear"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="min-width: 200px;">
+                        <!-- Adjust min-width here as needed -->
+                        <li>
+                            <div class="d-flex flex-column px-3"> <!-- Add padding on left and right sides -->
+                                <a href="{{ route('user.export', ['search' => $search]) }}"
+                                    class="btn btn-success my-1">Export</a> <!-- Adjust margin as needed -->
+                                <button type="button" class="btn btn-secondary my-1" data-bs-toggle="modal"
+                                    data-bs-target="#importUserModal">Import</button> <!-- Adjust margin as needed -->
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-            </form>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">Add
+                    User</button>
+            </div>
         </div>
-    </div>
 
-    <div id="list-viewuser">
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="table-light">
-                <tr>
-                        <th class="text-center">Name</th>
-                        <th class="text-center">Role</th>
-                        <th class="text-center">Email</th>
-                        <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                    @forelse($users as $user)
+        <div class="row">
+            <div class="col-md-6">
+                <form action="{{ route('user.index') }}" method="GET" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search users..."
+                            value="{{ $search }}">
+                        <button type="submit" class="btn btn-outline-secondary">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <form action="{{ route('user.index') }}" method="GET" class="mb-3">
+                    <div class="input-group">
+                        <label class="input-group-text" for="perPageSelect">Items per page:</label>
+                        <select class="form-select" id="perPageSelect" name="perPage" onchange="this.form.submit()">
+                            <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                            <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                            <option value="15" {{ $perPage == 15 ? 'selected' : '' }}>15</option>
+                            <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="list-viewuser">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
                         <tr>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->role }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td class="text-center">
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Role</th>
+                            <th class="text-center">Email</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($users as $user)
+                            <tr>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->role }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-info btn-sm btn-view-user"
+                                        data-user-id="{{ $user->id }}">View</button>
+                                    <button class="btn btn-primary btn-sm btn-edit-user"
+                                        data-user-id="{{ $user->id }}">Edit</button>
+                                    <button class="btn btn-warning btn-sm btn-edit-user-role"
+                                        data-user-id="{{ $user->id }}">Update Role</button>
+                                    <button type="button" class="btn btn-danger btn-sm btn-delete" data-bs-toggle="modal"
+                                        data-bs-target="#confirmDeleteUserModal"
+                                        data-user-id="{{ $user->id }}">Delete</button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center">No User found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {{ $users->appends(['perPage' => $perPage])->links() }}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div id="kanban-viewuser" class="d-none">
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @forelse($users as $user)
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $user->name }}</h5>
+                                <p class="card-text"><strong>Role:</strong> {{ $user->role }}</p>
+                                <p class="card-text"><strong>Email:</strong> {{ $user->email }}</p>
                                 <button type="button" class="btn btn-info btn-sm btn-view-user"
                                     data-user-id="{{ $user->id }}">View</button>
                                 <button class="btn btn-primary btn-sm btn-edit-user"
@@ -101,56 +142,24 @@
                                 <button class="btn btn-warning btn-sm btn-edit-user-role"
                                     data-user-id="{{ $user->id }}">Update Role</button>
                                 <button type="button" class="btn btn-danger btn-sm btn-delete" data-bs-toggle="modal"
-                                    data-bs-target="#confirmDeleteUserModal" data-user-id="{{ $user->id }}">Delete</button>
-                            </td>
-                        </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center">No User found.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                {{ $users->appends(['perPage' => $perPage])->links() }}
-            </ul>
-        </nav>
-    </div>
-    </div>
-
-    <div id="kanban-viewuser" class="d-none">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @forelse($users as $user)
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $user->name }}</h5>
-                            <p class="card-text"><strong>Role:</strong> {{ $user->role }}</p>
-                            <p class="card-text"><strong>Email:</strong> {{ $user->email }}</p>
-                            <button type="button" class="btn btn-info btn-sm btn-view-user"
-                                    data-user-id="{{ $user->id }}">View</button>
-                                <button class="btn btn-primary btn-sm btn-edit-user"
-                                    data-user-id="{{ $user->id }}">Edit</button>
-                                <button class="btn btn-warning btn-sm btn-edit-user-role"
-                                    data-user-id="{{ $user->id }}">Update Role</button>
-                                <button type="button" class="btn btn-danger btn-sm btn-delete" data-bs-toggle="modal"
-                                    data-bs-target="#confirmDeleteUserModal" data-user-id="{{ $user->id }}">Delete</button>
+                                    data-bs-target="#confirmDeleteUserModal"
+                                    data-user-id="{{ $user->id }}">Delete</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @empty
-                <div class="col">
-                    <p class="text-center">No User found.</p>
-                </div>
-            @endforelse
+                @empty
+                    <div class="col">
+                        <p class="text-center">No User found.</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
-    </div>
 
-<!-- Modals -->
-<!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <!-- Modals -->
+        <!-- Add User Modal -->
+        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
@@ -189,11 +198,12 @@
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
 
-<!-- Edit User Modal -->
-    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <!-- Edit User Modal -->
+        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
@@ -216,44 +226,46 @@
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
 
-<!-- Import User Modal -->
-<div class="modal fade" id="importUserModal" tabindex="-1" aria-labelledby="importUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="importUserModalLabel">Import Users</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-            <div class="mb-3 text-center">
-                <p class="mb-2">Before importing, download and fill out the template:</p>
-                <a href="{{ route('users.downloadTemplate') }}" class="btn btn-primary" target="_blank">
-                    Download Template
-                </a>
-            </div>
-
-                <hr>
-
-                <form id="importUserForm" method="POST" action="{{ route('users.import') }}" enctype="multipart/form-data">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="importFile" class="form-label">Choose File</label>
-                        <input type="file" class="form-control" id="importFile" name="file" required>
+        <!-- Import User Modal -->
+        <div class="modal fade" id="importUserModal" tabindex="-1" aria-labelledby="importUserModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importUserModalLabel">Import Users</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    
-                    <div class="text-end mt-4">
-                        <button type="submit" class="btn btn-primary">Import</button>
+                    <div class="modal-body">
+                        <div class="mb-3 text-center">
+                            <p class="mb-2">Before importing, download and fill out the template:</p>
+                            <a href="{{ route('users.downloadTemplate') }}" class="btn btn-primary" target="_blank">
+                                Download Template
+                            </a>
+                        </div>
+
+                        <hr>
+
+                        <form id="importUserForm" method="POST" action="{{ route('users.import') }}"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="importFile" class="form-label">Choose File</label>
+                                <input type="file" class="form-control" id="importFile" name="file" required>
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-primary">Import</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Confirmation Modal -->
-    <div class="modal fade" id="confirmDeleteUserModal" tabindex="-1" aria-labelledby="confirmDeleteUserModalLabel"
+        <!-- Confirmation Modal -->
+        <div class="modal fade" id="confirmDeleteUserModal" tabindex="-1" aria-labelledby="confirmDeleteUserModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -274,11 +286,12 @@
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
 
-<!-- User Details Modal -->
-    <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <!-- User Details Modal -->
+        <div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="userDetailsModalLabel">User Details</h5>
@@ -293,35 +306,35 @@
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
 
-<!-- Edit User Role Modal -->
-    <div class="modal fade" id="editUserRoleModal" tabindex="-1" aria-labelledby="editUserRoleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editUserRoleModalLabel">Edit User Role</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editUserRoleForm" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-3">
-                            <label for="editUserRole" class="form-label">Role</label>
-                            <select class="form-select" id="editUserRole" name="role" required>
-                                <option value="admin">Admin</option>
-                                <option value="super admin">Super Admin</option>
-                                <option value="user">User</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
+        <!-- Edit User Role Modal -->
+        <div class="modal fade" id="editUserRoleModal" tabindex="-1" aria-labelledby="editUserRoleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editUserRoleModalLabel">Edit User Role</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editUserRoleForm" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="mb-3">
+                                <label for="editUserRole" class="form-label">Role</label>
+                                <select class="form-select" id="editUserRole" name="role" required>
+                                    <option value="admin">Admin</option>
+                                    <option value="super admin">Super Admin</option>
+                                    <option value="user">User</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
 @endsection
