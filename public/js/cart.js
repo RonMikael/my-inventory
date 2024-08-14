@@ -1,7 +1,10 @@
 $(document).ready(function () {
-    // Use the URLs defined in the Blade template
-    var selectCustomerUrl = window.selectCustomerUrl;
-    var selectPaymentMethodUrl = window.selectPaymentMethodUrl;
+    // Initialize original total price
+    var originalTotal = parseFloat($('#totalPrice').text().replace('₱', '').replace(',', ''));
+    var appliedDiscount = {
+        type: $('#discountTypeInput').val(),
+        value: parseFloat($('#discountValueInput').val())
+    };
 
     // Set up CSRF token in AJAX headers
     $.ajaxSetup({
@@ -101,7 +104,9 @@ $(document).ready(function () {
     // Handle freebie selection
     $('#freebieDropdown').on('change', function () {
         var freebieId = $(this).val();
+        var freebieName = $('#freebieDropdown option:selected').text();
         $('#freebieInput').val(freebieId);
+        $('#selectedFreebie').text('Freebie: ' + freebieName);
     });
 
     // Handle discount type selection
@@ -113,12 +118,61 @@ $(document).ready(function () {
         } else {
             $('#discountValue').addClass('d-none');
             $('#discountValueInput').val(0);
+            $('#selectedDiscount').text('Discount: None');
         }
     });
 
     // Handle discount value input
     $('#discountInput').on('input', function () {
         var discountValue = $(this).val();
+        var discountType = $('#discountTypeInput').val();
+        
+        // Validate percentage value
+        if (discountType === 'percentage' && discountValue > 100) {
+            discountValue = 100;
+            $(this).val(discountValue);
+        }
+        
         $('#discountValueInput').val(discountValue);
     });
+
+    // Apply discount button click
+    $('#applyDiscountButton').on('click', function () {
+        appliedDiscount.type = $('#discountTypeInput').val();
+        appliedDiscount.value = parseFloat($('#discountValueInput').val());
+        updateTotalPrice();
+    });
+
+    // Refresh button click
+    $('#refreshDiscountButton').on('click', function () {
+        $('#discountDropdown').val('none').trigger('change');
+        $('#discountInput').val('');
+        $('#discountValueInput').val('0');
+        appliedDiscount = {
+            type: 'none',
+            value: 0
+        };
+        $('#totalPrice').text('₱' + originalTotal.toFixed(2));
+        $('#selectedDiscount').text('Discount: None');
+    });
+
+    function updateTotalPrice() {
+        var total = originalTotal;
+        var discountType = appliedDiscount.type;
+        var discountValue = appliedDiscount.value;
+
+        if (discountType === 'amount') {
+            total -= discountValue;
+        } else if (discountType === 'percentage') {
+            total -= (total * discountValue / 100);
+        }
+
+        // Ensure total does not go below zero
+        total = Math.max(total, 0);
+        $('#totalPrice').text('₱' + total.toFixed(2));
+
+        // Update discount details
+        var discountText = discountType === 'percentage' ? discountValue + '%' : '₱' + discountValue.toFixed(2);
+        $('#selectedDiscount').text('Discount: ' + (discountType === 'none' ? 'None' : (discountType.charAt(0).toUpperCase() + discountType.slice(1))) + ' - ' + discountText);
+    }
 });
